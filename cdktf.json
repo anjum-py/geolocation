@@ -1,11 +1,11 @@
 {
   "language": "python",
-  "app": "poetry run python main.py",
+  "app": "poetry run python cdktf_app.py",
   "terraformProviders": [
     "hashicorp/google"
   ],
   "terraformModules": [],
-  "codeMakerOutput": "imports",
+  "codeMakerOutput": "terraform/imports",
   "context": {
     "excludeStackIdFromLogicalIds": "true",
     "allowSepCharsInLogicalIds": "true"

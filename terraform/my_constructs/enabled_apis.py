@@ -1,6 +1,6 @@
 import os
 from constructs import Construct
-from imports.google.project_service import ProjectService
+from terraform.imports.google.project_service import ProjectService
 
 
 class EnabledAPIs(Construct):

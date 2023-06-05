@@ -1,5 +1,5 @@
 from constructs import Construct
-from imports.google.provider import GoogleProvider
+from terraform.imports.google.provider import GoogleProvider
 
 class GoogleCloudProvider(Construct):
     """

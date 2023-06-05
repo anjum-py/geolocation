@@ -1,4 +1,4 @@
-from imports.google.project_iam_custom_role import ProjectIamCustomRole
+from terraform.imports.google.project_iam_custom_role import ProjectIamCustomRole
 from constructs import Construct
 
 class CloudRunUpdateRole(Construct):

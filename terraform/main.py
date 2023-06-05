@@ -1,6 +1,6 @@
 from parse_env import getenv
 
-import my_constructs
+from terraform import my_constructs
 from cdktf import (
     App,
     DataTerraformRemoteStateGcs,
@@ -11,8 +11,8 @@ from cdktf import (
 )
 from constructs import Construct
 
-from imports.google.artifact_registry_repository import ArtifactRegistryRepository
-from imports.google.cloud_run_service import (
+from terraform.imports.google.artifact_registry_repository import ArtifactRegistryRepository
+from terraform.imports.google.cloud_run_service import (
     CloudRunService,
     CloudRunServiceTemplate,
     CloudRunServiceTemplateSpec,
@@ -23,19 +23,19 @@ from imports.google.cloud_run_service import (
     CloudRunServiceTemplateSpecContainersStartupProbeHttpGet,
     CloudRunServiceTraffic,
 )
-from imports.google.cloud_run_service_iam_member import CloudRunServiceIamMember
-from imports.google.cloud_scheduler_job import (
+from terraform.imports.google.cloud_run_service_iam_member import CloudRunServiceIamMember
+from terraform.imports.google.cloud_scheduler_job import (
     CloudSchedulerJob,
     CloudSchedulerJobHttpTarget,
     CloudSchedulerJobHttpTargetOauthToken,
 )
-from imports.google.cloudbuild_trigger import (
+from terraform.imports.google.cloudbuild_trigger import (
     CloudbuildTrigger,
     CloudbuildTriggerGitFileSource,
     CloudbuildTriggerSourceToBuild,
 )
-from imports.google.project_iam_member import ProjectIamMember
-from imports.google.service_account_iam_member import ServiceAccountIamMember
+from terraform.imports.google.project_iam_member import ProjectIamMember
+from terraform.imports.google.service_account_iam_member import ServiceAccountIamMember
 
 
 class BaseStack(TerraformStack):
@@ -106,7 +106,7 @@ class PreCloudRunStack(TerraformStack):
             "geolocation-deploy-svac-construct",
         )
 
-        # Output service email account to access value in cloud run deploy stack
+        # Output service email account to access value in cloudrun stack
         TerraformOutput(
             self,
             "cloud-build-svac-email",
@@ -322,9 +322,7 @@ class DeployCloudRunStack(TerraformStack):
             service_account_id=cloud_run_svac.svac.name,
         )
 
-
 app = App()
 BaseStack(app, "base")
 PreCloudRunStack(app, "pre-cloudrun")
 DeployCloudRunStack(app, "cloudrun")
-app.synth()

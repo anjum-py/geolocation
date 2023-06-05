@@ -1,5 +1,5 @@
 from constructs import Construct
-from imports.google.storage_bucket import (
+from terraform.imports.google.storage_bucket import (
     StorageBucket,
     StorageBucketVersioning,
     StorageBucketLifecycleRule,

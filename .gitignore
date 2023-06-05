@@ -12,3 +12,4 @@ cdktf.log
 .env
 aliases.sh
 test.Dockerfile
+**.DS_Store**

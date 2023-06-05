@@ -1,5 +1,5 @@
 from constructs import Construct
-from imports.google.service_account import ServiceAccount
+from terraform.imports.google.service_account import ServiceAccount
 
 
 class GeolocationCloudBuildSvAc(Construct):
