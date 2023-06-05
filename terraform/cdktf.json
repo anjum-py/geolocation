@@ -1,0 +1,14 @@
+{
+  "language": "python",
+  "app": "poetry run python main.py",
+  "terraformProviders": [
+    "hashicorp/google"
+  ],
+  "terraformModules": [],
+  "codeMakerOutput": "imports",
+  "context": {
+    "excludeStackIdFromLogicalIds": "true",
+    "allowSepCharsInLogicalIds": "true"
+  },
+  "projectId": "3e4f3bcc-e5c2-11ed-a70d-91c3ca2f862e"
+}

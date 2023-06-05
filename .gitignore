@@ -1,0 +1,14 @@
+dist/
+terraform/imports/*
+!imports/__init__.py
+.terraform
+cdktf.out
+cdktf.log
+*terraform.*.tfstate*
+**.vscode/**
+**__pycache__**
+**.benchmarks**
+**db/**
+.env
+aliases.sh
+test.Dockerfile

@@ -1,0 +1,68 @@
+steps:
+  # Copy the .env file to workspace
+  - name: gcr.io/cloud-builders/gsutil
+    args:
+      - '-c'
+      - |
+        gsutil cp $(gsutil ls | grep "^gs://env-config-" | head -n 1).env \
+        /workspace/.env;
+        if [ -f /workspace/.env ]; then
+          echo ".env file copied to workspace directory";
+        else
+          echo "A supporting .env file is required to set up infrastructure";
+          exit 1;
+        fi;
+    entrypoint: bash
+
+  # Run tests before building image
+  - name: 'docker.io/mbanjum/geolocation-pytest:latest'
+    args:
+      - '-c'
+      - |
+        echo $(pwd);
+        poetry config virtualenvs.in-project true \
+        && poetry install --no-root --no-interaction --no-ansi --with test;
+        mkdir -p /workspace/db;
+        cp -r /db /workspace;
+        echo $(ls /workspace/db);
+        PATH="/workspace/.venv/bin:$${PATH}"
+        echo $${PATH}
+        pytest -s;
+    entrypoint: bash
+
+  # Build and push container image
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - '-c'
+      - |
+        set -a;
+        [ -f .env ] && . .env;
+        set +a;
+        docker build . --tag=$${CLOUDRUN_IMAGE_LATEST};
+        docker push $${CLOUDRUN_IMAGE_LATEST};
+    entrypoint: bash
+
+  # Update existing cloud run service
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - '-c'
+      - |
+        set -a;
+        [ -f .env ] && . ./.env;
+        set +a;
+        SERVICE_EXISTS=$(gcloud run services describe $${CLOUDRUN_SERVICE_NAME} \
+        --region $${REGION_PREFERRED} \
+        --format="value(status.url)");
+        if [[ $${SERVICE_EXISTS} ]]; then
+            echo "Deploying an updated revision of $${CLOUDRUN_SERVICE_NAME}";
+            gcloud run deploy $${CLOUDRUN_SERVICE_NAME} \
+            --image $${CLOUDRUN_IMAGE_LATEST} \
+            --region $${REGION_PREFERRED};
+        else
+            echo "Service $${CLOUDRUN_SERVICE_NAME} is not deployed. Use cdktf for initial deployment"
+            exit 0
+        fi
+    entrypoint: bash
+
+options:
+  logging: CLOUD_LOGGING_ONLY
