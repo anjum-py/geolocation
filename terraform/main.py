@@ -156,19 +156,21 @@ class PreCloudRunStack(TerraformStack):
             git_file_source=CloudbuildTriggerGitFileSource(
                 path="cloudbuild.yaml",
                 repo_type="GITHUB",
+                revision="refs/heads/main",
+                uri=getenv("GIT_SOURCE_REPOSITORY"),
             ),
             source_to_build=CloudbuildTriggerSourceToBuild(
-                ref="refs/heads/dev",
+                ref="refs/heads/main",
                 repo_type="GITHUB",
-                uri="https://github.com/anjum-py/geolocation.git",
+                uri=getenv("GIT_SOURCE_REPOSITORY"),
             ),
             service_account=self.cloud_build_svac.svac.name,
-            lifecycle=TerraformResourceLifecycle(
-                ignore_changes=[
-                    "filename",
-                    "git_file_source",
-                ]
-            ),
+            # lifecycle=TerraformResourceLifecycle(
+            #     ignore_changes=[
+            #         "filename",
+            #         "git_file_source",
+            #     ]
+            # ),
         )
 
         # Schedule weekly trigger for cloud build

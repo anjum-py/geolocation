@@ -76,8 +76,11 @@ async def lookup_ip(ip):
     )
 
 
-app = FastAPI()
-
+app = FastAPI(
+    title="Geolocation API",
+    description="This API provides geolocation information based on IP address.",
+    version="0.1.0",
+)
 app.add_middleware(
     TrustedHostMiddleware, allowed_hosts=getenv("FASTAPI_ALLOWED_HOSTS", "*").split(" ")
 )
@@ -105,8 +108,17 @@ async def address_not_found_error(request: Request, exc: AddressNotFoundError):
     "/",
     response_model=models.GeoLocation,
     response_model_exclude_none=True,
+    summary="Lookup IP Geolocation",
+    tags=["Geolocation"]
 )
 async def ip_lookup(ip: models.IPAddress, request: Request):
+    """
+    Lookup IP Geolocation
+
+    Send an empty `POST` body to lookup your IP address or look up any IP address available in MaxMind Geolite2 databases
+
+    - **ip_address**: The IP address to lookup (string).
+    """
     ip_address = (
         str(ip.ip_address)
         if ip.ip_address
@@ -114,9 +126,13 @@ async def ip_lookup(ip: models.IPAddress, request: Request):
     )
     return await lookup_ip(ip_address)
 
-
-@app.get("/healthz/")
+@app.get("/healthz/", summary="Health Check", tags=["Health Check"])
 async def health_check():
+    """
+    Health Check
+
+    Performs a health check on the Geolocation API.
+    """
     try:
         city_db.city("8.8.8.8")
         asn_db.asn("8.8.8.8")
