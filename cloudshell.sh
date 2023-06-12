@@ -8,7 +8,7 @@ echo "#########################################################"
 echo "Exporting environment variables"
 set -a
 . ./.env
-POETRY_PREFER_ACTIVE_PYTHON="1"
+POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON="1"
 alias trigger-build='gcloud builds triggers run $CLOUD_BUILD_TRIGGER --branch=main'
 set +a
 
@@ -73,7 +73,6 @@ if ! command -v cdktf >/dev/null 2>&1; then
     echo "Installing cdktf-cli..."
     npm install --global cdktf-cli@latest
 fi
-
 
 
 echo "#########################################################"
