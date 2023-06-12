@@ -1,16 +1,20 @@
 #!/bin/bash
 
 python_version_install="3.11.4"
-
+bashrc_file="${HOME}/.bashrc"
 
 # Exporting environment variables
 echo "#########################################################"
 echo "Exporting environment variables"
 set -a
 . ./.env
-POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON="1"
-
+echo "Environment variables set"
 set +a
+
+if ! grep -q "export POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON="1"" "$bashrc_file"; then
+    echo "export POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON="1"" >> "$bashrc_file"
+    source ~/.bashrc
+fi
 
 # Check if Python version is already greater than or equal to 3.11.4
 if python3 -c "import sys; exit(0) if sys.version_info >= (3, 11, 4) else exit(1)"; then
@@ -73,7 +77,6 @@ if ! command -v cdktf >/dev/null 2>&1; then
     echo "Installing cdktf-cli..."
     mkdir -p "${HOME}/.npm-packages"
     npm config set prefix "${HOME}/.npm-packages"
-    bashrc_file="${HOME}/.bashrc"
     if ! grep -q "NPM_PACKAGES=\"\${HOME}/.npm-packages\"" "$bashrc_file"; then
         echo "NPM_PACKAGES=\"\${HOME}/.npm-packages\"" >> "$bashrc_file"
     fi
@@ -90,12 +93,15 @@ if ! command -v cdktf >/dev/null 2>&1; then
 fi
 
 
-echo "#########################################################"
-echo "Creating bucket for terraform state"
 if ! gsutil ls -b gs://$BUCKET_PRIMARY_TF_STATE > /dev/null 2>&1; then
-  gsutil mb -l $REGION_PREFERRED -p $PROJECT_ID -b on gs://$BUCKET_PRIMARY_TF_STATE;
-  gsutil versioning set on gs://$BUCKET_PRIMARY_TF_STATE;
-  gsutil lifecycle set lifecycle_rule.json gs://$BUCKET_PRIMARY_TF_STATE;
+    echo "#########################################################"
+    echo "Creating gs://$BUCKET_PRIMARY_TF_STATE bucket for terraform state"
+    gsutil mb -l $REGION_PREFERRED -p $PROJECT_ID -b on gs://$BUCKET_PRIMARY_TF_STATE;
+    gsutil versioning set on gs://$BUCKET_PRIMARY_TF_STATE;
+    gsutil lifecycle set lifecycle_rule.json gs://$BUCKET_PRIMARY_TF_STATE;
+else
+    echo "#########################################################"
+    echo "Terraform state bucket gs://$BUCKET_PRIMARY_TF_STATE exists"
 fi
 
 echo "#########################################################"
