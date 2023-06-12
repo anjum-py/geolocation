@@ -9,7 +9,6 @@ echo "Exporting environment variables"
 set -a
 . ./.env
 POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON="1"
-alias trigger-build='gcloud builds triggers run $CLOUD_BUILD_TRIGGER --branch=main'
 set +a
 
 # Check if Python version is already greater than or equal to 3.11.4
@@ -97,6 +96,4 @@ cdktf deploy pre-cloudrun --auto-approve
 
 echo "#########################################################"
 echo "Trigger cloud build"
-trigger-build
-
-
+gcloud builds triggers run $CLOUD_BUILD_TRIGGER --branch=main
