@@ -71,6 +71,7 @@ class BaseStack(TerraformStack):
             tf_resource_id="env-config-bucket",
             bucket_name=getenv("BUCKET_ENV_CONFIG"),
             preferred_region=getenv("REGION_PREFERRED"),
+            allow_destroy=True,
         )
 
         # Google Cloud APIs to be enabled
@@ -151,7 +152,7 @@ class PreCloudRunStack(TerraformStack):
         cloudbuild_trigger = CloudbuildTrigger(
             self,
             "gelocation-build-trigger",
-            name="geolocation-trigger",
+            name=getenv("CLOUD_BUILD_TRIGGER"),
             description="Manual cloudbuild trigger to build and push geolocation container image",
             git_file_source=CloudbuildTriggerGitFileSource(
                 path="cloudbuild.yaml",
