@@ -9,6 +9,7 @@ echo "Exporting environment variables"
 set -a
 . ./.env
 POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON="1"
+
 set +a
 
 # Check if Python version is already greater than or equal to 3.11.4
@@ -66,11 +67,26 @@ if ! command -v cdktf >/dev/null 2>&1; then
     pip install cdktf
 fi
 
-# Install cdktf-cli globally using npm
+# Install cdktf-cli for user using npm
 if ! command -v cdktf >/dev/null 2>&1; then
     echo "#########################################################"
     echo "Installing cdktf-cli..."
-    npm install --global cdktf-cli@latest
+    mkdir -p "${HOME}/.npm-packages"
+    npm config set prefix "${HOME}/.npm-packages"
+    bashrc_file="${HOME}/.bashrc"
+    if ! grep -q "NPM_PACKAGES=\"\${HOME}/.npm-packages\"" "$bashrc_file"; then
+        echo "NPM_PACKAGES=\"\${HOME}/.npm-packages\"" >> "$bashrc_file"
+    fi
+
+    if ! grep -q "export PATH=\"\$PATH:\$NPM_PACKAGES/bin\"" "$bashrc_file"; then
+        echo "export PATH=\"\$PATH:\$NPM_PACKAGES/bin\"" >> "$bashrc_file"
+    fi
+
+    if ! grep -q "export MANPATH=\"\${MANPATH-\$(manpath)}:\$NPM_PACKAGES/share/man\"" "$bashrc_file"; then
+        echo "export MANPATH=\"\${MANPATH-\$(manpath)}:\$NPM_PACKAGES/share/man\"" >> "$bashrc_file"
+    fi
+    source ~/.bashrc
+    npm install cdktf-cli@latest
 fi
 
 
@@ -94,6 +110,3 @@ echo "#########################################################"
 echo "Apply CDKTF pre-cloudrun stack"
 cdktf deploy pre-cloudrun --auto-approve
 
-echo "#########################################################"
-echo "Trigger cloud build"
-gcloud builds triggers run $CLOUD_BUILD_TRIGGER --branch=main
