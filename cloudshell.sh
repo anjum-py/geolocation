@@ -93,4 +93,6 @@ cdktf deploy pre-cloudrun --auto-approve
 
 echo "#########################################################"
 echo "Trigger cloud build"
-gcloud builds triggers run $CLOUD_BUILD_TRIGGER --branch=main
+alias trigger-build='gcloud builds triggers run $CLOUD_BUILD_TRIGGER --branch=main'
+trigger-build
+
