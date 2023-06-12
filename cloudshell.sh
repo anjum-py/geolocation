@@ -11,8 +11,8 @@ set -a
 echo "Environment variables set"
 set +a
 
-if ! grep -q "export POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON="1"" "$bashrc_file"; then
-    echo "export POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON="1"" >> "$bashrc_file"
+if ! grep -q "export POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON=\"1\"" "$bashrc_file"; then
+    echo "export POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON=\"1\"" >> "$bashrc_file"
     source ~/.bashrc
 fi
 
