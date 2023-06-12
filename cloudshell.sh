@@ -2,6 +2,16 @@
 
 python_version_install="3.11.4"
 
+
+# Exporting environment variables
+echo "#########################################################"
+echo "Exporting environment variables"
+set -a
+. ./.env
+POETRY_PREFER_ACTIVE_PYTHON="1"
+alias trigger-build='gcloud builds triggers run $CLOUD_BUILD_TRIGGER --branch=main'
+set +a
+
 # Check if Python version is already greater than or equal to 3.11.4
 if python3 -c "import sys; exit(0) if sys.version_info >= (3, 11, 4) else exit(1)"; then
     echo "#########################################################"
@@ -64,12 +74,7 @@ if ! command -v cdktf >/dev/null 2>&1; then
     npm install --global cdktf-cli@latest
 fi
 
-# Exporting environment variables
-echo "#########################################################"
-echo "Exporting environment variables"
-set -a
-. ./.env
-set +a
+
 
 echo "#########################################################"
 echo "Creating bucket for terraform state"
@@ -93,6 +98,6 @@ cdktf deploy pre-cloudrun --auto-approve
 
 echo "#########################################################"
 echo "Trigger cloud build"
-alias trigger-build='gcloud builds triggers run $CLOUD_BUILD_TRIGGER --branch=main'
 trigger-build
+
 
