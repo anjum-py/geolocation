@@ -1,3 +1,4 @@
+from typing import Optional
 from constructs import Construct
 from terraform.imports.google.provider import GoogleProvider
 
@@ -11,7 +12,7 @@ class GoogleCloudProvider(Construct):
         parent_scope: Construct,
         construct_name: str,
         tf_resource_id: str,
-        credentials_path: str,
+        credentials_path: Optional[str],
         preferred_region: str,
         project_id: str,
     ):
