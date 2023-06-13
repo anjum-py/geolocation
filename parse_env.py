@@ -42,7 +42,7 @@ class ParseEnv:
         if not value or "$" in value:
             self.load_dotenv()
             value = os.environ.get(key, default)
-        if value is not None:
+        if value is not None and isinstance(str, value):
             value = value.replace('"', '').strip()
         return value
 
