@@ -98,6 +98,18 @@ install_cdktf_cli() {
         echo "cdktf-cli is already installed."
     fi
 }
+# Function to check if the terraform/imports directory exists
+check_terraform_imports_directory() {
+    if [[ ! -d "terraform/imports" ]]; then
+        echo "---------------------------------------------------------"
+        echo "The terraform/imports directory does not exist."
+        echo "Running 'cdktf get' command..."
+        cdktf get
+    else
+        echo "---------------------------------------------------------"
+        echo "The terraform/imports directory already exists."
+    fi
+}
 
 # Function to create or check the existence of the Terraform state bucket
 create_or_check_tf_state_bucket() {
@@ -146,6 +158,7 @@ if [[ -z "$1" ]]; then
     install_poetry
     install_cdktf
     install_cdktf_cli
+    check_terraform_imports_directory
     create_or_check_tf_state_bucket
     cdktf_deploy
 elif [[ "$1" == "prepare" ]]; then
