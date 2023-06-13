@@ -166,6 +166,9 @@ elif [[ "$1" == "prepare" ]]; then
     install_pyenv_and_python
     install_poetry
     install_cdktf
+    install_cdktf_cli
+    create_or_check_tf_state_bucket
+    check_terraform_imports_directory
 elif [[ "$1" == "cdktf-cli" ]]; then
     echo "Installing cdktf-cli..."
     install_cdktf_cli
