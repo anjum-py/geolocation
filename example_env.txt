@@ -16,7 +16,7 @@ CLOUDRUN_IMAGE_LATEST=${CLOUDRUN_IMAGE}:latest
 CLOUD_BUILD_TRIGGER=${PROJECT_NAME}-trigger
 
 FASTAPI_CORS_ORIGINS="https://example.com"
-FASTAPI_ALLOWED_HOSTS="https://example.com"
+FASTAPI_ALLOWED_HOSTS="*"
 
 GIT_SOURCE_REPOSITORY="https://github.com/gitusername/geolocation"
 
