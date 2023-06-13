@@ -29,8 +29,9 @@ class GoogleCloudProvider(Construct):
         super().__init__(parent_scope, construct_name)
 
         # Read the contents of the credentials file
-        with open(credentials_path, "r") as file:
-            credentials = file.read()
+        if credentials_path:
+            with open(credentials_path, "r") as file:
+                credentials = file.read()
 
         # Create a GoogleProvider instance with the specified configuration
         self.provider = GoogleProvider(
