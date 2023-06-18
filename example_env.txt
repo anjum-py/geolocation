@@ -1,11 +1,20 @@
-PROJECT_NAME=geolocation
+# Google Cloud project name
+PROJECT_NAME=
+
+# Random numeric characters assigned by Google to created unique project ID
 RANDOM_ID=
 
-REGION_PREFERRED=
+# Preferred Google Cloud region
+REGION_PREFERRED=asia-south1
 
+# If your Google Project ID is not a combination of project name and random ID,
+# set the correct project ID
 PROJECT_ID=${PROJECT_NAME}-${RANDOM_ID}
 
+# You can update the following variables if required
+# else, they will be substituted based on the above values
 BUCKET_PRIMARY_TF_STATE=primary-tfstate-${RANDOM_ID}
+# Make sure the name starts with 'env-config-'
 BUCKET_ENV_CONFIG=env-config-${RANDOM_ID}
 ARTIFACT_REPOSITORY_NAME=${PROJECT_NAME}
 CONTAINER_IMAGE_NAME=${PROJECT_NAME}
@@ -13,16 +22,24 @@ CLOUDRUN_SERVICE_NAME=${PROJECT_NAME}-api
 CLOUDRUN_IMAGE=${REGION_PREFERRED}-docker.pkg.dev/${PROJECT_ID}/${ARTIFACT_REPOSITORY_NAME}/${CONTAINER_IMAGE_NAME}
 CLOUDRUN_IMAGE_LATEST=${CLOUDRUN_IMAGE}:latest
 
-CLOUD_BUILD_TRIGGER=${PROJECT_NAME}-trigger
+# Space separated list of FastAPI CORS origins
+FASTAPI_CORS_ORIGINS="https://cors-origin-domain.com"
 
-FASTAPI_CORS_ORIGINS="https://example.com"
+# Space separated list of FastAPI trusted hosts
+# "*" means allows all hosts
+# Ideally, this should be the url of our Cloud Run service
+# but that will be known only after applying our configuration 
 FASTAPI_ALLOWED_HOSTS="*"
 
-GIT_SOURCE_REPOSITORY=
+# url of forked repository
+# Replace --------- with your github username
+# Make sure not to add .git extension, as it will create a redundant connection
+GIT_SOURCE_REPOSITORY=https://github.com/---------/geolocation
 
-GEOIPUPDATE_ACCOUNT_ID=
-GEOIPUPDATE_LICENSE_KEY=
+# MaxMind Account details
+GEOIPUPDATE_ACCOUNT_ID=000000
+GEOIPUPDATE_LICENSE_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Leave these unchanged
 GEOIPUPDATE_EDITION_IDS="GeoLite2-ASN GeoLite2-City"
 GEOIPUPDATE_DB_DIR=/workspace/db
-
-
