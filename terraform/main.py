@@ -11,7 +11,9 @@ from cdktf import (
 )
 from constructs import Construct
 
-from terraform.imports.google.artifact_registry_repository import ArtifactRegistryRepository
+from terraform.imports.google.artifact_registry_repository import (
+    ArtifactRegistryRepository,
+)
 from terraform.imports.google.cloud_run_service import (
     CloudRunService,
     CloudRunServiceTemplate,
@@ -23,7 +25,9 @@ from terraform.imports.google.cloud_run_service import (
     CloudRunServiceTemplateSpecContainersStartupProbeHttpGet,
     CloudRunServiceTraffic,
 )
-from terraform.imports.google.cloud_run_service_iam_member import CloudRunServiceIamMember
+from terraform.imports.google.cloud_run_service_iam_member import (
+    CloudRunServiceIamMember,
+)
 from terraform.imports.google.cloud_scheduler_job import (
     CloudSchedulerJob,
     CloudSchedulerJobHttpTarget,
@@ -59,10 +63,12 @@ class BaseStack(TerraformStack):
         )
 
         # Set up google storage bucket for remote state
-        # This bucket should exist before applying deploying
-
-        GcsBackend(self, bucket=getenv("BUCKET_PRIMARY_TF_STATE"), prefix="base")
-        # Create a separate bucket storing terraform state of cloud run service deployment
+        # This bucket should exist beforehand
+        GcsBackend(
+            self,
+            bucket=getenv("BUCKET_PRIMARY_TF_STATE"),
+            prefix="base",
+        )
 
         # Create a bucket for storing env config
         my_constructs.VersionedBucket(
@@ -98,7 +104,7 @@ class PreCloudRunStack(TerraformStack):
         GcsBackend(
             self,
             bucket=getenv("BUCKET_PRIMARY_TF_STATE"),
-            prefix="privileged",
+            prefix="precloudrun",
         )
 
         # Create a service account for cloud build
@@ -166,12 +172,6 @@ class PreCloudRunStack(TerraformStack):
                 uri=getenv("GIT_SOURCE_REPOSITORY"),
             ),
             service_account=self.cloud_build_svac.svac.name,
-            # lifecycle=TerraformResourceLifecycle(
-            #     ignore_changes=[
-            #         "filename",
-            #         "git_file_source",
-            #     ]
-            # ),
         )
 
         # Schedule weekly trigger for cloud build
@@ -224,12 +224,12 @@ class DeployCloudRunStack(TerraformStack):
             prefix="cloudrun",
         )
 
-        # Read output of privileged stack from remote bucket
-        read_privileged_stack = DataTerraformRemoteStateGcs(
+        # Read output of pre-cloudrun stack from remote bucket
+        read_precloudrun_stack = DataTerraformRemoteStateGcs(
             self,
             "gcs-remote-state",
             bucket=getenv("BUCKET_PRIMARY_TF_STATE"),
-            prefix="privileged",
+            prefix="precloudrun",
         )
 
         # Create a dedicated service account for cloud run
@@ -297,6 +297,25 @@ class DeployCloudRunStack(TerraformStack):
             self, "cloud-run-update-construct"
         )
 
+        # Attach a cloud run service update role to cloud build service account
+        CloudRunServiceIamMember(
+            self,
+            "cloud-run-update-service-role",
+            service=cloud_run_svc.name,
+            location=getenv("REGION_PREFERRED"),
+            role=cloud_run_update_role.role.name,
+            member=f"serviceAccount:{read_precloudrun_stack.get_string('cloud-build-svac-email')}",
+        )
+
+        # Allow cloud build account access to act as cloud run account
+        ServiceAccountIamMember(
+            self,
+            "service-account-user-run-role",
+            role="roles/iam.serviceAccountUser",
+            member=f"serviceAccount:{read_precloudrun_stack.get_string('cloud-build-svac-email')}",
+            service_account_id=cloud_run_svac.svac.name,
+        )
+
         # Enable cloud run service account to write logs
         ProjectIamMember(
             self,
@@ -306,24 +325,6 @@ class DeployCloudRunStack(TerraformStack):
             member=f"serviceAccount:{cloud_run_svac.svac.email}",
         )
 
-        # Attach a cloud run service update role to cloud build service account
-        CloudRunServiceIamMember(
-            self,
-            "cloud-run-update-service-role",
-            service=cloud_run_svc.name,
-            location=getenv("REGION_PREFERRED"),
-            role=cloud_run_update_role.role.name,
-            member=f"serviceAccount:{read_privileged_stack.get_string('cloud-build-svac-email')}",
-        )
-
-        # Allow cloud build account access to act as cloud run account
-        ServiceAccountIamMember(
-            self,
-            "service-account-user-run-role",
-            role="roles/iam.serviceAccountUser",
-            member=f"serviceAccount:{read_privileged_stack.get_string('cloud-build-svac-email')}",
-            service_account_id=cloud_run_svac.svac.name,
-        )
 
 app = App()
 BaseStack(app, "base")

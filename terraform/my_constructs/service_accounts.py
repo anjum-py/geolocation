@@ -8,8 +8,8 @@ class GeolocationCloudBuildSvAc(Construct):
 
         self.svac = ServiceAccount(
             self,
-            "geolocation-deploy-svac",
-            account_id="geolocation-deploy-svac",
+            "geolocation-builder-svac",
+            account_id="geolocation-builder-svac",
             display_name="Geolocation Builder Service Account",
             description="Dedicated service account for Cloud Build to build and deploy geolocation cloud run service",
         )
@@ -21,8 +21,8 @@ class GeolocationCloudRunSvAc(Construct):
 
         self.svac = ServiceAccount(
             self,
-            "geolocation-run-svac",
-            account_id="geolocation-run-svac",
+            "geolocation-runner-svac",
+            account_id="geolocation-runner-svac",
             display_name="Geolocation Cloud Run Service Account",
             description="Dedicated service account to run geolocation cloud run service with limited permissions",
         )

@@ -1,8 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
-from src.main import app
-from parse_env import getenv
 from icecream import ic
+
+from parse_env import getenv
+from src.main import app
 
 client = TestClient(
     app,

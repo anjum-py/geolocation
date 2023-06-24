@@ -143,6 +143,10 @@ cdktf_deploy() {
 # Function to destroy the CDKTF stacks
 cdktf_destroy() {
     echo "---------------------------------------------------------"
+    echo "Destroying CDKTF cloudrun stack"
+    cdktf destroy cloudrun --auto-approve
+
+    echo "---------------------------------------------------------"
     echo "Destroying CDKTF pre-cloudrun stack"
     cdktf destroy pre-cloudrun --auto-approve
 
@@ -158,8 +162,8 @@ if [[ -z "$1" ]]; then
     install_poetry
     install_cdktf
     install_cdktf_cli
-    check_terraform_imports_directory
     create_or_check_tf_state_bucket
+    check_terraform_imports_directory
     cdktf_deploy
 elif [[ "$1" == "prepare" ]]; then
     echo "Preparing environment..."
