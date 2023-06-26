@@ -124,7 +124,7 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "cattrs"
-version = "22.2.0"
+version = "23.1.2"
 description = "Composable complex class support for attrs and dataclasses."
 category = "dev"
 optional = false
@@ -133,10 +133,20 @@ python-versions = ">=3.7"
 [package.dependencies]
 attrs = ">=20"
 exceptiongroup = {version = "*", markers = "python_version < \"3.11\""}
+typing_extensions = {version = ">=4.1.0", markers = "python_version < \"3.11\""}
+
+[package.extras]
+bson = ["pymongo (>=4.2.0,<5.0.0)"]
+cbor2 = ["cbor2 (>=5.4.6,<6.0.0)"]
+msgpack = ["msgpack (>=1.0.2,<2.0.0)"]
+orjson = ["orjson (>=3.5.2,<4.0.0)"]
+pyyaml = ["PyYAML (>=6.0,<7.0)"]
+tomlkit = ["tomlkit (>=0.11.4,<0.12.0)"]
+ujson = ["ujson (>=5.4.0,<6.0.0)"]
 
 [[package]]
 name = "cdktf"
-version = "0.16.3"
+version = "0.17.0"
 description = "Cloud Development Kit for Terraform"
 category = "dev"
 optional = false
@@ -185,14 +195,14 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7
 
 [[package]]
 name = "constructs"
-version = "10.2.43"
+version = "10.2.60"
 description = "A programming model for software-defined state"
 category = "dev"
 optional = false
 python-versions = "~=3.7"
 
 [package.dependencies]
-jsii = ">=1.82.0,<2.0.0"
+jsii = ">=1.84.0,<2.0.0"
 publication = ">=0.0.3"
 typeguard = ">=2.13.3,<2.14.0"
 
@@ -462,7 +472,7 @@ testing = ["Django (<3.1)", "attrs", "colorama", "docopt", "pytest (<7.0.0)"]
 
 [[package]]
 name = "jsii"
-version = "1.82.0"
+version = "1.84.0"
 description = "Python client for jsii runtime"
 category = "dev"
 optional = false
@@ -470,7 +480,7 @@ python-versions = "~=3.7"
 
 [package.dependencies]
 attrs = ">=21.2,<24.0"
-cattrs = ">=1.8,<22.3"
+cattrs = ">=1.8,<23.2"
 importlib-resources = ">=5.2.0"
 publication = ">=0.0.3"
 python-dateutil = "*"
@@ -975,7 +985,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "0ff9298c4c78f553156875446db96e523d73cf58fad9f514a949835521a6049d"
+content-hash = "39df238258b0013042e873161c061d71140bd3237c1d36ceb5ef4c07bc1dd4a6"
 
 [metadata.files]
 aiohttp = [
@@ -1123,12 +1133,12 @@ black = [
     {file = "black-23.3.0.tar.gz", hash = "sha256:1c7b8d606e728a41ea1ccbd7264677e494e87cf630e399262ced92d4a8dac940"},
 ]
 cattrs = [
-    {file = "cattrs-22.2.0-py3-none-any.whl", hash = "sha256:bc12b1f0d000b9f9bee83335887d532a1d3e99a833d1bf0882151c97d3e68c21"},
-    {file = "cattrs-22.2.0.tar.gz", hash = "sha256:f0eed5642399423cf656e7b66ce92cdc5b963ecafd041d1b24d136fdde7acf6d"},
+    {file = "cattrs-23.1.2-py3-none-any.whl", hash = "sha256:b2bb14311ac17bed0d58785e5a60f022e5431aca3932e3fc5cc8ed8639de50a4"},
+    {file = "cattrs-23.1.2.tar.gz", hash = "sha256:db1c821b8c537382b2c7c66678c3790091ca0275ac486c76f3c8f3920e83c657"},
 ]
 cdktf = [
-    {file = "cdktf-0.16.3-py3-none-any.whl", hash = "sha256:e250f1cd85b271601abca3742f285ebb42dfe33258ce0e29466ebfb1329ada27"},
-    {file = "cdktf-0.16.3.tar.gz", hash = "sha256:ff4a45012e947fbe0697aa5591ca941f413e8daf92c1435217d7cab9bddb12e6"},
+    {file = "cdktf-0.17.0-py3-none-any.whl", hash = "sha256:0047e4391b616c3e40e9f96406b5e8b6a6f0132e5933cc5ac2f82487513614dc"},
+    {file = "cdktf-0.17.0.tar.gz", hash = "sha256:0b5410d83c3c7005ef7342dd282eab8ba5b4c867be04609ac420941bb61a0237"},
 ]
 certifi = [
     {file = "certifi-2023.5.7-py3-none-any.whl", hash = "sha256:c6c2e98f5c7869efca1f8916fed228dd91539f9f1b444c314c06eef02980c716"},
@@ -1220,8 +1230,8 @@ colorama = [
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
 constructs = [
-    {file = "constructs-10.2.43-py3-none-any.whl", hash = "sha256:c353d5682258b0966eb5ed8fa6c3aaeb0d8410aec198bf74671e92a313ffb938"},
-    {file = "constructs-10.2.43.tar.gz", hash = "sha256:12730aeb994ced4849902892a2c26d390bc23f9cfc5fb2d316d1ca5e5935b16c"},
+    {file = "constructs-10.2.60-py3-none-any.whl", hash = "sha256:1c7338d1aea67fc594012639d3cb7953554522991d4f703e1d378dc2f2b8b0ca"},
+    {file = "constructs-10.2.60.tar.gz", hash = "sha256:1199a94f22e78b21078116d87d2f67d95b54d6c15a6614578674026e1c8b9566"},
 ]
 decorator = [
     {file = "decorator-5.1.1-py3-none-any.whl", hash = "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"},
@@ -1411,8 +1421,8 @@ jedi = [
     {file = "jedi-0.18.2.tar.gz", hash = "sha256:bae794c30d07f6d910d32a7048af09b5a39ed740918da923c6b780790ebac612"},
 ]
 jsii = [
-    {file = "jsii-1.82.0-py3-none-any.whl", hash = "sha256:69231656bec928fbabadac096c88a4a6c9e2cc0d6e6e4ddb5d0ccaf84ade5bd2"},
-    {file = "jsii-1.82.0.tar.gz", hash = "sha256:7876ed3ab13bb56a463ac3e38e6ece427628a894a600fd5ad87a6e1da5af98ba"},
+    {file = "jsii-1.84.0-py3-none-any.whl", hash = "sha256:7748205665d079112721d6eb23a37fa084722ab675f65e8a6514ec908660bd57"},
+    {file = "jsii-1.84.0.tar.gz", hash = "sha256:29f8352525e980e126d5d0fd3510fff9a81a8dbc36249f99d922907f2e6bf4c3"},
 ]
 matplotlib-inline = [
     {file = "matplotlib-inline-0.1.6.tar.gz", hash = "sha256:f887e5f10ba98e8d2b150ddcf4702c1e5f8b3a20005eb0f74bfdbd360ee6f304"},

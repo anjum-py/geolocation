@@ -5,6 +5,7 @@ bashrc_file="${HOME}/.bashrc"
 PYENV_ROOT="$HOME/.pyenv"
 PATH="$PYENV_ROOT/bin:$PATH"
 
+
 # Exporting environment variables
 echo "---------------------------------------------------------"
 echo "Exporting environment variables"
@@ -69,6 +70,7 @@ install_poetry() {
     if ! command -v poetry >/dev/null 2>&1; then
         echo "---------------------------------------------------------"
         echo "Installing poetry..."
+        add_line_to_bashrc 'POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON="1"'
         curl -sSL https://install.python-poetry.org | python3 -
     else
         echo "---------------------------------------------------------"
@@ -130,6 +132,7 @@ create_or_check_tf_state_bucket() {
 
 # Function to deploy the CDKTF stacks
 cdktf_deploy() {
+    
     echo "---------------------------------------------------------"
     echo "Applying CDKTF base stack"
     cdktf deploy base --auto-approve
