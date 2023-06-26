@@ -37,7 +37,6 @@ install_pyenv_and_python() {
         add_line_to_bashrc 'eval "$(pyenv init -)"'
 
         # Reload the shell
-        source ~/.bashrc
         echo "---------------------------------------------------------"
         echo "pyenv installed. Checking Python version..."
     fi
@@ -49,6 +48,7 @@ install_pyenv_and_python() {
     else
         echo "---------------------------------------------------------"
         echo "Python version is not installed. Installing Python $python_version_install..."
+        source ~/.bashrc
         pyenv install $python_version_install
         pyenv global $python_version_install
     fi
