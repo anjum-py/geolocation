@@ -31,7 +31,7 @@ install_pyenv_and_python() {
 
         # Update ~/.bashrc with pyenv configuration if lines don't exist
         add_line_to_bashrc 'export PYENV_ROOT="$HOME/.pyenv"'
-        add_line_to_bashrc 'export PATH="$PYENV_ROOT/bin:$PATH"'
+        add_line_to_bashrc 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
         add_line_to_bashrc 'eval "$(pyenv init -)"'
 
         # Reload the shell
