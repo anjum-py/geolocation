@@ -18,6 +18,8 @@ add_line_to_bashrc() {
     fi
 }
 
+
+
 # Function to install pyenv and set Python version
 install_pyenv_and_python() {
     # Check if pyenv is installed
@@ -39,7 +41,7 @@ install_pyenv_and_python() {
         echo "---------------------------------------------------------"
         echo "pyenv installed. Checking Python version..."
     fi
-
+    source ~/.bashrc
     # Check if Python version is already greater than or equal to 3.11.0
     if python3 -c "import sys; exit(0) if sys.version_info >= (3, 11, 4) else exit(1)"; then
         echo "---------------------------------------------------------"
