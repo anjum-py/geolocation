@@ -2,6 +2,8 @@
 
 python_version_install="3.11.4"
 bashrc_file="${HOME}/.bashrc"
+PYENV_ROOT="$HOME/.pyenv"
+PATH="$PYENV_ROOT/bin:$PATH"
 
 # Exporting environment variables
 echo "---------------------------------------------------------"
@@ -22,10 +24,6 @@ add_line_to_bashrc() {
 
 # Function to install pyenv and set Python version
 install_pyenv_and_python() {
-    add_line_to_bashrc 'export PYENV_ROOT="$HOME/.pyenv"'
-    add_line_to_bashrc 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
-    source ~/.bashrc
-
     # Check if pyenv is installed
     if command -v pyenv >/dev/null 2>&1; then
         echo "---------------------------------------------------------"
@@ -36,7 +34,8 @@ install_pyenv_and_python() {
         curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 
         # Update ~/.bashrc with pyenv configuration if lines don't exist
-        add_line_to_bashrc 'eval "$(pyenv init -)"'
+        add_line_to_bashrc 'export PYENV_ROOT="$HOME/.pyenv"'
+        add_line_to_bashrc 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"'
         source ~/.bashrc
         # Reload the shell
         echo "---------------------------------------------------------"
