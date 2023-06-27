@@ -32,8 +32,6 @@ trigger_and_get_build_id(){
     --project=${PROJECT_ID};
 }
 deploy_cloudrun_revision(){
-    echo "- Deploying cdktf cloudrun stack to make sure we have the required cloud resources";
-    cdktf_deploy_cloudrun
     echo "---------------------------------------------------------"
     echo "- Attempting to deploy Cloud Run revision";
     gcloud run deploy ${CLOUDRUN_SERVICE_NAME} \
@@ -260,12 +258,14 @@ update_cloudrun_revision(){
     if [ $? == 0 ]; then
         echo "---------------------------------------------------------"
         echo "- Image - ${CLOUDRUN_IMAGE_LATEST} - exists";
+        cdktf_deploy_cloudrun
         deploy_cloudrun_revision
     else
         echo "---------------------------------------------------------"
         echo "- Container image does not exist"
         echo "- Attempting to trigger a build"
         trigger_build
+        cdktf_deploy_cloudrun
         deploy_cloudrun_revision
     fi
 }
