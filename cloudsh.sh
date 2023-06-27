@@ -356,5 +356,5 @@ else
     echo "- update-revision : Deploys a new Cloud Run revision"
     echo "- update-revision-build : Simple Cloud Run revision deployment, meant to be used in cloudbuild.yaml"
     echo "- deploy : Combines cdktf-deploy-base + update-revision"
-    echo "- destroy : Destroy all stacks
+    echo "- destroy : Destroy all stacks"
 fi
