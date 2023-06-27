@@ -32,8 +32,6 @@ trigger_and_get_build_id(){
     --project=${PROJECT_ID};
 }
 deploy_cloudrun_revision(){
-    echo "---------------------------------------------------------"
-    echo "- Attempting to deploy Cloud Run revision";
     gcloud run deploy ${CLOUDRUN_SERVICE_NAME} \
     --image ${CLOUDRUN_IMAGE_LATEST} \
     --region ${REGION_PREFERRED} \
@@ -63,6 +61,7 @@ update_path_if_not_exists(){
 
 # Make sure NPM_BIN_PATH is in PATH
 update_path_if_not_exists ${NPM_BIN_PATH}
+
 # Function to install cdktf-cli in user's home directory
 install_cdktf_cli() {
     if ! command -v cdktf >/dev/null 2>&1; then
@@ -78,8 +77,10 @@ install_cdktf_cli() {
     fi
 }
 
-
+# Make sure POETRY_PATH is in PATH
 update_path_if_not_exists ${POETRY_PATH}
+
+# Install python poetry
 install_poetry() {
     # Install poetry
     if ! command -v poetry >/dev/null 2>&1; then
@@ -95,8 +96,9 @@ install_poetry() {
     fi
 }
 
-
+# Make sure PYENV_ROOT is in PATH
 update_path_if_not_exists ${PYENV_ROOT}/bin
+
 # Function to install Pyenv
 install_pyenv() {
     if command -v pyenv >/dev/null 2>&1; then
@@ -110,8 +112,6 @@ install_pyenv() {
         add_line_to_bashrc 'export PATH="$PYENV_ROOT/bin:$PATH"'
         add_line_to_bashrc 'eval "$(pyenv init -)"'
         source "$BASHRC_FILE"
-        echo "---------------------------------------------------------"
-        echo "- Pyenv installed."
     fi
 }
 
@@ -127,12 +127,13 @@ install_python_with_pyenv() {
     fi
 }
 
-
+# Function to create poetry virtualenv
 create_poetry_virtualenv() {
     pyenv local ${PYTHON_VERSION_INSTALL}
     poetry env use "$PYTHON_VERSION_INSTALL"
     poetry install --only cdktf
 }
+
 # Function to create or check the existence of the Terraform state bucket
 create_or_check_tf_state_bucket() {
     if ! gsutil ls -b gs://$BUCKET_PRIMARY_TF_STATE > /dev/null 2>&1; then
@@ -147,8 +148,7 @@ create_or_check_tf_state_bucket() {
     fi
 }
 
-
-# Function to check if the terraform/imports directory exists
+# Function to check if the terraform providers have been imported
 cdktf_get() {
     update_path_if_not_exists $(poetry env info -p)/bin
     if [[ ! -d "terraform/imports" ]]; then
@@ -161,6 +161,8 @@ cdktf_get() {
         echo "- The terraform/imports directory already exists."
     fi
 }
+
+# Function to run cdktf synth command
 cdktf_synth() {
     update_path_if_not_exists $(poetry env info -p)/bin
     create_or_check_tf_state_bucket
@@ -168,6 +170,8 @@ cdktf_synth() {
     echo "- Running 'cdktf synth' command..."
     cdktf synth
 }
+
+# Function to run foundational cdktf stacks and copy .env file
 cdktf_deploy_base() {
 
     update_path_if_not_exists $(poetry env info -p)/bin
@@ -186,6 +190,7 @@ cdktf_deploy_base() {
     gsutil cp .env gs://$BUCKET_ENV_CONFIG/.env
 }
 
+# Function to deploy cloudrun stack
 cdktf_deploy_cloudrun() {
     update_path_if_not_exists $(poetry env info -p)/bin
     container_image_exists &>/dev/null;
@@ -193,14 +198,10 @@ cdktf_deploy_cloudrun() {
         echo "---------------------------------------------------------"
         echo "- Deploying cloudrun stack"
         cdktf deploy cloudrun --auto-approve
-    else
-        echo "---------------------------------------------------------"
-        echo "- Required image could not be located."
-        echo "- Run the Cloud Build trigger manually once to build and push the image"
-        echo "- Once the image is created, run the './deploy.sh deploy' again"
     fi
 }
 
+# Function to monitor trigger build and wait for its completion
 check_build_status() {
     local build_id=$1
     local start_time=$(date +%s)
@@ -240,6 +241,7 @@ check_build_status() {
     done
 }
 
+# Function to trigger cloud build
 trigger_build(){
     cloudbuild_trigger_exists > /dev/null 2>&1
     if [ $? == 0 ]; then
@@ -253,24 +255,46 @@ trigger_build(){
     fi
 }
 
+# Function to update cloudrun revision if image exists, else trigger cloudbuild
 update_cloudrun_revision(){
     container_image_exists &>/dev/null;
     if [ $? == 0 ]; then
         echo "---------------------------------------------------------"
         echo "- Image - ${CLOUDRUN_IMAGE_LATEST} - exists";
+
         cdktf_deploy_cloudrun
+
+        echo "---------------------------------------------------------"
+        echo "- Attempting to deploy Cloud Run revision";
         deploy_cloudrun_revision
+
     else
+
         echo "---------------------------------------------------------"
         echo "- Container image does not exist"
         echo "- Attempting to trigger a build"
         trigger_build
+
         cdktf_deploy_cloudrun
+
+        echo "---------------------------------------------------------"
+        echo "- Attempting to deploy Cloud Run revision";
         deploy_cloudrun_revision
     fi
 }
-test_update_cloudrun_revision(){
-    update_cloudrun_revision
+
+cdktf_destroy(){
+    echo "---------------------------------------------------------"
+    echo "- Destroy cloudrun stack";
+    cdktf destroy cloudrun --auto-approve;
+
+    echo "---------------------------------------------------------"
+    echo "- Destroy pre-cloudrun stack";
+    cdktf destroy pre-cloudrun --auto-approve;
+
+    echo "---------------------------------------------------------"
+    echo "- Destroy base stack";
+    cdktf destroy base --auto-approve;
 }
 
 # Main script logic
@@ -313,6 +337,8 @@ elif [[ "$1" == "prepare" ]]; then
 elif [[ "$1" == "deploy" ]]; then
     cdktf_deploy_base
     update_cloudrun_revision
+elif [[ "$1" == "destroy" ]]; then
+    cdktf_destroy
 else
     echo "Invalid argument."
     echo "Available arguments"
@@ -329,4 +355,5 @@ else
     echo "- update-revision : Deploys a new Cloud Run revision"
     echo "- update-revision-build : Simple Cloud Run revision deployment, meant to be used in cloudbuild.yaml"
     echo "- deploy : Combines cdktf-deploy-base + update-revision"
+    echo "- destroy : Destroy all stacks
 fi
