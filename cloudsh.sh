@@ -298,6 +298,8 @@ elif [[ "$1" == "cdktf-deploy-cloudrun" ]]; then
     cdktf_deploy_cloudrun
 elif [[ "$1" == "update-revision" ]]; then
     update_cloudrun_revision
+elif [[ "$1" == "update-revision-build" ]]; then
+    deploy_cloudrun_revision
 elif [[ "$1" == "force-rebuild" ]]; then
     trigger_build
     update_cloudrun_revision
@@ -325,5 +327,6 @@ else
     echo "- force-rebuild : Forces a Cloud Build trigger"
     echo "- prepare : Installs cdktf-cli, poetry, pyenv, python, create poetry-env, runs 'cdktf get' command"
     echo "- update-revision : Deploys a new Cloud Run revision"
+    echo "- update-revision-build : Simple Cloud Run revision deployment, meant to be used in cloudbuild.yaml"
     echo "- deploy : Combines cdktf-deploy-base + update-revision"
 fi
