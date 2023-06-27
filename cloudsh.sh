@@ -283,6 +283,7 @@ update_cloudrun_revision(){
     fi
 }
 
+# Function to destroy cdktf stacks
 cdktf_destroy(){
     echo "---------------------------------------------------------"
     echo "- Destroy cloudrun stack";
