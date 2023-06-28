@@ -300,8 +300,8 @@ cdktf_destroy(){
 
 # Main script logic
 if [[ -z "$1" ]]; then
-    ./cloudsh.sh prepare
-    ./cloudsh.sh deploy
+    ./deploy.sh prepare
+    ./deploy.sh deploy
 elif [[ "$1" == "cdktf-cli" ]]; then
     install_cdktf_cli
 elif [[ "$1" == "poetry" ]]; then
