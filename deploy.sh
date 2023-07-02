@@ -8,6 +8,28 @@ POETRY_HOME="${HOME}/poetry"
 POETRY_PATH=${POETRY_HOME}/venv/bin/poetry
 PYENV_ROOT="${HOME}/.pyenv"
 
+
+# Load .env file
+set -a
+. ./.env
+set +a
+
+# Function to check if a line exists in .bashrc and add it if not
+add_line_to_bashrc() {
+    if ! grep -q "$1" "$BASHRC_FILE"; then
+        echo "$1" >> "$BASHRC_FILE"
+    fi
+}
+
+# Function to update the lookup PATH if the provided path does not exist
+
+update_path_if_not_exists(){
+    local path_to_add="$1"
+    if [[ ":$PATH:" != *":$path_to_add:"* ]]; then
+        export PATH="$path_to_add:$PATH"
+    fi
+}
+
 cloudrun_service_exists(){
     gcloud run services describe ${CLOUDRUN_SERVICE_NAME} \
         --region ${REGION_PREFERRED} \
@@ -38,26 +60,6 @@ deploy_cloudrun_revision(){
     --project=${PROJECT_ID};
 }
 
-# Exporting environment variables
-set -a
-. ./.env
-set +a
-
-# Function to check if a line exists in .bashrc and add it if not
-add_line_to_bashrc() {
-    if ! grep -q "$1" "$BASHRC_FILE"; then
-        echo "$1" >> "$BASHRC_FILE"
-    fi
-}
-
-# Function to update the lookup PATH if the provided path does not exist
-
-update_path_if_not_exists(){
-    local path_to_add="$1"
-    if [[ ":$PATH:" != *":$path_to_add:"* ]]; then
-        export PATH="$path_to_add:$PATH"
-    fi
-}
 
 # Make sure NPM_BIN_PATH is in PATH
 update_path_if_not_exists ${NPM_BIN_PATH}
@@ -162,15 +164,6 @@ cdktf_get() {
     fi
 }
 
-# Function to run cdktf synth command
-cdktf_synth() {
-    update_path_if_not_exists $(poetry env info -p)/bin
-    create_or_check_tf_state_bucket
-    echo "---------------------------------------------------------"
-    echo "- Running 'cdktf synth' command..."
-    cdktf synth
-}
-
 # Function to run foundational cdktf stacks and copy .env file
 cdktf_deploy_base() {
 
@@ -214,17 +207,17 @@ check_build_status() {
         formatted_time=$(date -u -d @${elapsed_time} +"%H:%M:%S")
 
         case $build_status in
-            STATUS_UNKNOWN | WORKING | PENDING | QUEUED)
-                echo "---------------------------------------------------------"
-                echo "- Build status - $build_status"
-                echo "- Elapsed Time: ${formatted_time}"
-                sleep 30
-                ;;
             SUCCESS)
                 echo "---------------------------------------------------------"
                 echo "- Build status - $build_status"
                 echo "- Elapsed Time: ${formatted_time}"
                 return 0
+                ;;
+            WORKING | PENDING | QUEUED)
+                echo "---------------------------------------------------------"
+                echo "- Build status - $build_status"
+                echo "- Elapsed Time: ${formatted_time}"
+                sleep 30
                 ;;
             FAILURE | TIMEOUT | INTERNAL_ERROR | CANCELLED | EXPIRED)
                 echo "---------------------------------------------------------"
