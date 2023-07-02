@@ -47,7 +47,7 @@ steps:
   - name: gcr.io/cloud-builders/gcloud
     args:
       - '-c'
-      - ./cloudsh.sh update-revision
+      - ./deploy.sh update-revision
     entrypoint: bash
 
 options:
