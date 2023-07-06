@@ -43,11 +43,26 @@ steps:
     entrypoint: bash
 
 
-  # Update existing cloud run service
+# Update existing cloud run service
   - name: gcr.io/cloud-builders/gcloud
     args:
       - '-c'
-      - ./deploy.sh update-revision
+      - |
+        set -a;
+        [ -f .env ] && . ./.env;
+        set +a;
+        SERVICE_EXISTS=$(gcloud run services describe $${CLOUDRUN_SERVICE_NAME} \
+        --region $${REGION_PREFERRED} \
+        --format="value(status.url)");
+        if [[ $${SERVICE_EXISTS} ]]; then
+            echo "Deploying an updated revision of $${CLOUDRUN_SERVICE_NAME}";
+            gcloud run deploy $${CLOUDRUN_SERVICE_NAME} \
+            --image $${CLOUDRUN_IMAGE_LATEST} \
+            --region $${REGION_PREFERRED};
+        else
+            echo "Service $${CLOUDRUN_SERVICE_NAME} is not deployed. Use cdktf for initial deployment"
+            exit 0
+        fi
     entrypoint: bash
 
 options:
