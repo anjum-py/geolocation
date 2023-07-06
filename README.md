@@ -24,6 +24,8 @@ If you'd rather watch a video instead of reading a long article, here is a link 
 
 Explore a live demo of the Geolocation API hosted on my Google Cloud platform, running as a Cloud Run revision, [on this page](https://anjum-py.github.io/projects/deploying-geolocation-api-deployment-guide/#demo). Enter a valid public IP address, whether IPv4 or IPv6, to retrieve its details. If no input is provided, the API will return details of your own IP address.
 
+You will find the OpenAPI docs [here](https://geolocation-api-zuravksy3a-el.a.run.app/docs/).
+
 ## Overview of deployment steps
 
 - We will start with getting a MaxMind developer account to obtain a license key. This key will be used in our `Dockerfile` to download latest GeoLite2 databases.
